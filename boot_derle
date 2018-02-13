@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# Device Indicator
+device=shamrock
+
+# Color Changes
+RED='\033[0;31m'
+Blue='\033[0;34m'
+LightPurple='\033[1;35m'
+
+# Welcome Extension's
+echo -e "\x1b[35;1m **************************************** \x1b[m"
+echo -e "\x1b[35;1m **************************************** \x1b[m"
+echo -e "\x1b[35;1m **************************************** \x1b[m"
+echo -e "\x1b[35;1m * ${RED}Boot Derleme Yazılımına Hoş Geldiniz * \x1b[m"
+echo -e "\x1b[35;1m **************************************** \x1b[m"
+echo -e "\x1b[35;1m **************************************** \x1b[m"
+echo -e "\x1b[35;1m **************************************** \x1b[m"
+echo -e "\x1b[35;1m *  ${RED}@Rygebin${LightPurple} tarafından hazırlanmıştır. * \x1b[m"
+echo -e "\x1b[35;1m **************************************** \x1b[m"
+echo -e "\x1b[35;1m **************************************** \x1b[m"
+echo -e "\x1b[35;1m **************************************** \x1b[m"
+
+# User Confirmation
+read -p "Devam Edilsin Mi? (e/h)" Devam
+if [ "$Devam" = "e" ]; then
+  echo "Devam Ediliyor..";
+sleep 3
+else
+  echo -e  "Durduruluyor..";
+sleep 2
+  exit
+fi
+
+# Check Compile Status
+if [ -z "${ENVSETUP_COMP}" ]; then
+    export ENVSETUP_COMP=1
+read -p 'Cihaz Adını Yazınız : ' device
+    . build/envsetup.sh && lunch lineage_$device-userdebug && croot
+fi
+
+# Compile Tools
+make clean -j30
+make bootimage -j30
+
+
+
+# Rename with Timestap
+timestamp=`date --rfc-1517963767=hours`
+mv out/target/product/$device/boot*.img out/target/product/$device/ARM64FusionKernel_$(date +"%Y-%m-%d_%H-%M-%S")-$device.img
+
+# Uploud the Mega Directory #Disabled
+#megaput -u [username] -p [password] --path /Root/ARM64_Fusion_Kernel_Project out/target/product/$device/ARM64FusionKernel_*.img
+
+# Uploud the Yandex.Disk (Alternative Uplouder)
+cd out/target/product/$device/
+cp  -r ARM64FusionKernel_*.img ../../../../../Yandex.Disk/FusionX64-Kernel-Project
+cd ../../../..
